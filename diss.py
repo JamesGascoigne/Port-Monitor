@@ -1,3 +1,4 @@
+#!/usr/bin/python
 
 import socket
 import struct
@@ -5,42 +6,30 @@ import textwrap
 from collections import defaultdict
 
 
+import MySQLdb
+
+db = MySQLdb.connect(host="localhost",
+                user="root",
+                passwd="jgazza97",
+                db="Ips"
+                )
+
+print(db)
+
+cursor = db.cursor()
+
+print(cursor)
+
+number_of_rows = cursor.execute("select * from IPAddress");
+
+print(number_of_rows)
+
+
+
 ipadresses = []
 iplist = []
 iplist2 = []
 
-def main():
-    conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
-
-    while True:
-        raw_data, addr = conn. recvfrom(65536)
-        dest_mac, src_mac, eth_proto, data = eth_frame(raw_data)
-        print('\nEthernet Frame:')
-        print('Destination: {}, Source: {}, Protocol: {}'.format(dest_mac, src_mac, eth_proto, data))
-
-        if eth_proto == 8:
-            (version, header_length, ttl, proto, src, target, data) = ipv4_stuff(data)
-            print('IPv4 Packet:')
-            print('Version: {}, header length:{}, TTL: {}'.format(version, header_length, ttl))
-            print('Protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
-
-            ipadresses.append(src)
-            #print(ipadresses)
-
-            len(ipadresses)
-
-            appearances = defaultdict(int)
-
-            for ip in ipadresses:
-                appearances[ip] += 1
-                #print (appearances)
-            for ip in ipadresses:
-                if ip not in iplist:
-                    iplist.append(ip)
-                    print (iplist)
-
-            if proto == 1:
-                icmo_type, code, checksum, data = icmp_packet()
 
 #unpack
 def eth_frame(data):
@@ -99,6 +88,44 @@ def formatmulti(prefix, string, size=80):
         if size % 2:
             size -= 1
         return '\n'.join([prefix + line for line in textwrap.wrap(string, size)])
+
+def main():
+    conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+
+    while True:
+        raw_data, addr = conn. recvfrom(65536)
+        dest_mac, src_mac, eth_proto, data = eth_frame(raw_data)
+        print('\nEthernet Frame:')
+        print('Destination: {}, Source: {}, Protocol: {}'.format(dest_mac, src_mac, eth_proto, data))
+
+        if eth_proto == 8:
+            (version, header_length, ttl, proto, src, target, data) = ipv4_stuff(data)
+            print('IPv4 Packet:')
+            print('Version: {}, header length:{}, TTL: {}'.format(version, header_length, ttl))
+            print('Protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
+
+            ipadresses.append(src)
+            #print(ipadresses)
+
+            len(ipadresses)
+
+            appearances = defaultdict(int)
+
+            for ip in ipadresses:
+                appearances[ip] += 1
+                #print (appearances)
+            for ip in ipadresses:
+                if ip not in iplist:
+                    iplist.append(ip)
+                    print (iplist)
+
+            if proto == 1:
+                icmo_type, code, checksum, data = icmp_packet()
+
+
+cursor.executemany("""INSERT INTO IPAddress (x, y, z) VALUES (%s, %s, %s """, iplist);
+db.commit()
+
 
 main()
 
