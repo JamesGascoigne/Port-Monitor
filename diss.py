@@ -2,7 +2,12 @@
 import socket
 import struct
 import textwrap
+from collections import defaultdict
 
+
+ipadresses = []
+iplist = []
+iplist2 = []
 
 def main():
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
@@ -18,6 +23,21 @@ def main():
             print('IPv4 Packet:')
             print('Version: {}, header length:{}, TTL: {}'.format(version, header_length, ttl))
             print('Protocol: {}, Source: {}, Target: {}'.format(proto, src, target))
+
+            ipadresses.append(src)
+            #print(ipadresses)
+
+            len(ipadresses)
+
+            appearances = defaultdict(int)
+
+            for ip in ipadresses:
+                appearances[ip] += 1
+                #print (appearances)
+            for ip in ipadresses:
+                if ip not in iplist:
+                    iplist.append(ip)
+                    print (iplist)
 
             if proto == 1:
                 icmo_type, code, checksum, data = icmp_packet()
